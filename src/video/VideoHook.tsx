@@ -1,15 +1,17 @@
 import { useEffect, useRef } from 'react';
 import { useState } from 'react';
 
-export function VideoHook(id: number) {
+export function VideoHook(
+  videoRef: React.MutableRefObject<HTMLVideoElement>,
+  contRef: React.MutableRefObject<HTMLDivElement>,
+  id: number
+) {
   const vp = document.getElementById('video_player-' + id)! as HTMLVideoElement;
-
-  const videoRef = useRef({} as HTMLVideoElement);
-  const contRef = useRef({} as HTMLDivElement);
 
   const [play, setPlay] = useState<boolean>(true);
   const [muted, setMuted] = useState<boolean>(true);
   const [fs, setFS] = useState<boolean>(false);
+  const [disable, setDisable] = useState<boolean>(false);
 
   const [len, setLen] = useState<string>('00:00');
   const [clock, setClock] = useState<string>('00:00');
@@ -29,10 +31,12 @@ export function VideoHook(id: number) {
 
     function mouseMove() {
       clearTimeout(timeout);
+
       timeout = setTimeout(() => {
         v.classList.add('video__hide-cursor');
         c.classList.add('video__hide-controls');
       }, 2000);
+
       v.classList.remove('video__hide-cursor');
       c.classList.remove('video__hide-controls');
       c.classList.remove('video__show-controls');
@@ -41,6 +45,7 @@ export function VideoHook(id: number) {
     v.addEventListener('mousemove', mouseMove);
 
     function mouseOut() {
+      console.log('out');
       c.classList.add('video__show-controls');
     }
 
@@ -48,12 +53,14 @@ export function VideoHook(id: number) {
 
     function mouseOver() {
       c.classList.add('video__over-controls');
+      if (!disable) setDisable(true);
     }
 
     s.addEventListener('mouseover', mouseOver);
 
     function mouseLeave() {
       c.classList.remove('video__over-controls');
+      if (disable) setDisable(false);
     }
 
     s.addEventListener('mouseleave', mouseLeave);
@@ -65,7 +72,7 @@ export function VideoHook(id: number) {
       s.removeEventListener('mouseleave', mouseLeave);
       clearTimeout(timeout);
     };
-  }, [id, muted]);
+  }, [id, muted, disable]);
 
   function toggleMuted() {
     setMuted((prev) => (prev = !prev));
@@ -135,6 +142,7 @@ export function VideoHook(id: number) {
   return {
     videoRef,
     contRef,
+    disable,
     muted,
     play,
     prog,

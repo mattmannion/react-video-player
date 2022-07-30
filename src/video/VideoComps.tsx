@@ -3,6 +3,8 @@ import 'src/video/video.select.scss';
 import { VideoHook } from 'src/video/VideoHook';
 
 interface VideoSpeedProps {
+  videoRef: React.MutableRefObject<HTMLVideoElement>;
+  contRef: React.MutableRefObject<HTMLDivElement>;
   id: number;
 }
 
@@ -11,9 +13,9 @@ interface VideoOptionProps {
   val: number;
 }
 
-export function VideoSpeed({ id }: VideoSpeedProps) {
+export function VideoSpeed({ videoRef, contRef, id }: VideoSpeedProps) {
   const d = useRef({} as HTMLDivElement);
-  const { speed, changeSpeed } = VideoHook(id);
+  const { speed, changeSpeed } = VideoHook(videoRef, contRef, id);
 
   function VideoOption({ title, val }: VideoOptionProps) {
     return (
@@ -45,7 +47,7 @@ export function VideoSpeed({ id }: VideoSpeedProps) {
   );
 }
 
-const size = 20;
+const size = 24;
 
 interface VideoIconProps {
   src: string;
@@ -54,8 +56,43 @@ interface VideoIconProps {
 
 export function VideoIcon({ src, alt }: VideoIconProps) {
   return (
-    <div className='video__icon'>
-      <img src={src} alt={alt} height={size} width={size} />
+    <img
+      className='video__icon'
+      src={src}
+      alt={alt}
+      height={size}
+      width={size}
+    />
+  );
+}
+interface VideoPlayJumpProps {
+  play: boolean;
+  togglePlay: () => void;
+  jump: (jump: number) => void;
+}
+
+export function VideoPlayJump({ play, togglePlay, jump }: VideoPlayJumpProps) {
+  return (
+    <div className='video__play-jump'>
+      <div onClick={() => jump(-15)}>
+        <VideoIcon src='svg/backward.svg' alt='backward' />
+      </div>
+      <div onClick={() => jump(-5)}>
+        <VideoIcon src='svg/small-backward.svg' alt='backward' />
+      </div>
+      <div onClick={togglePlay}>
+        {play ? (
+          <VideoIcon src='svg/play.svg' alt='play' />
+        ) : (
+          <VideoIcon src='svg/pause.svg' alt='pause' />
+        )}
+      </div>
+      <div onClick={() => jump(5)}>
+        <VideoIcon src='svg/small-forward.svg' alt='forward' />
+      </div>
+      <div onClick={() => jump(15)}>
+        <VideoIcon src='svg/forward.svg' alt='forward' />
+      </div>
     </div>
   );
 }

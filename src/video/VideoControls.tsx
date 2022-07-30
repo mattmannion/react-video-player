@@ -1,5 +1,5 @@
 import {
-  VideoIcon,
+  VideoPlayJump,
   VideoSpeed,
   VideoTogFS,
   VideoVolume,
@@ -7,7 +7,10 @@ import {
 import 'src/video/video.timeline.scss';
 
 interface VideoControlsProps {
+  videoRef: React.MutableRefObject<HTMLVideoElement>;
+  contRef: React.MutableRefObject<HTMLDivElement>;
   id: number;
+  disable: boolean;
   play: boolean;
   prog: number;
   muted: boolean;
@@ -24,7 +27,10 @@ interface VideoControlsProps {
 }
 
 export function VideoControls({
+  videoRef,
+  contRef,
   id,
+  disable,
   play,
   togglePlay,
   prog,
@@ -43,6 +49,12 @@ export function VideoControls({
     <div
       className='video__controls-container video__show-controls'
       id={'controls-' + id}
+      onClick={() => {
+        if (!disable) togglePlay();
+      }}
+      onDoubleClick={() => {
+        if (!disable) toggleFullscreen();
+      }}
     >
       <div className='video__controls-sub-cont' id={'sub-' + id}>
         <div className='video__progress'>
@@ -56,29 +68,9 @@ export function VideoControls({
         </div>
         <div className='video__controls'>
           <div className='video__controls-left'>
-            <div className='video__play-jump'>
-              <div onClick={() => jump(-15)}>
-                <VideoIcon src='svg/backward.svg' alt='backward' />
-              </div>
-              <div onClick={() => jump(-5)}>
-                <VideoIcon src='svg/small-backward.svg' alt='backward' />
-              </div>
-              <div onClick={togglePlay}>
-                {play ? (
-                  <VideoIcon src='svg/play.svg' alt='play' />
-                ) : (
-                  <VideoIcon src='svg/pause.svg' alt='pause' />
-                )}
-              </div>
-              <div onClick={() => jump(5)}>
-                <VideoIcon src='svg/small-forward.svg' alt='forward' />
-              </div>
-              <div onClick={() => jump(15)}>
-                <VideoIcon src='svg/forward.svg' alt='forward' />
-              </div>
-            </div>
+            <VideoPlayJump play={play} togglePlay={togglePlay} jump={jump} />
             <div className='video__volume'>
-              <div className='video__mute' onClick={toggleMuted}>
+              <div className='video__volume-icon' onClick={toggleMuted}>
                 <VideoVolume muted={muted} vol={vol} />
               </div>
               <div className='video__volume-slider'>
@@ -91,12 +83,12 @@ export function VideoControls({
                 />
               </div>
             </div>
-            <div>
+            <div className='video__clock'>
               {clock}&nbsp;<strong>/</strong>&nbsp;{len}
             </div>
           </div>
           <div className='video__controls-right'>
-            <VideoSpeed id={id} />
+            <VideoSpeed videoRef={videoRef} contRef={contRef} id={id} />
             <VideoTogFS fs={fs} toggleFullscreen={toggleFullscreen} />
           </div>
         </div>

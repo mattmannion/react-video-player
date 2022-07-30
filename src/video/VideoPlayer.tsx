@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { VideoHook } from 'src/video/VideoHook';
 import { VideoControls } from 'src/video/VideoControls';
 import 'src/video/video.scss';
@@ -8,16 +9,11 @@ interface VideoProps {
 }
 
 export function VideoPlayer({ src, id }: VideoProps) {
-  const vh = VideoHook(id);
-  const {
-    videoRef,
-    contRef,
-    muted,
-    timeUpdate,
-    togglePlay,
-    toggleFullscreen,
-    loadMetaData,
-  } = vh;
+  const videoRef = useRef({} as HTMLVideoElement);
+  const contRef = useRef({} as HTMLDivElement);
+
+  const vh = VideoHook(videoRef, contRef, id);
+  const { muted, timeUpdate, loadMetaData } = vh;
 
   return (
     <div className='video' id={'video-' + id} ref={contRef}>
@@ -29,8 +25,6 @@ export function VideoPlayer({ src, id }: VideoProps) {
         muted={muted}
         onTimeUpdate={timeUpdate}
         onLoadedMetadata={loadMetaData}
-        onClick={togglePlay}
-        onDoubleClick={toggleFullscreen}
       >
         <source type='video/mp4' src={src} />
       </video>
