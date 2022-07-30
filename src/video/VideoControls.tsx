@@ -24,6 +24,7 @@ interface VideoControlsProps {
   fs: boolean;
   toggleFullscreen: () => void;
   jump: (jump: number) => void;
+  setDisable: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export function VideoControls({
@@ -44,6 +45,7 @@ export function VideoControls({
   fs,
   toggleFullscreen,
   jump,
+  setDisable,
 }: VideoControlsProps) {
   return (
     <div
@@ -88,7 +90,12 @@ export function VideoControls({
             </div>
           </div>
           <div className='video__controls-right'>
-            <VideoSpeed videoRef={videoRef} contRef={contRef} id={id} />
+            <VideoSpeed
+              videoRef={videoRef}
+              contRef={contRef}
+              id={id}
+              setDisable={setDisable}
+            />
             <VideoTogFS fs={fs} toggleFullscreen={toggleFullscreen} />
           </div>
         </div>

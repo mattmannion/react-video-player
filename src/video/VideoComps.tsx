@@ -6,6 +6,7 @@ interface VideoSpeedProps {
   videoRef: React.MutableRefObject<HTMLVideoElement>;
   contRef: React.MutableRefObject<HTMLDivElement>;
   id: number;
+  setDisable: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface VideoOptionProps {
@@ -13,7 +14,12 @@ interface VideoOptionProps {
   val: number;
 }
 
-export function VideoSpeed({ videoRef, contRef, id }: VideoSpeedProps) {
+export function VideoSpeed({
+  videoRef,
+  contRef,
+  id,
+  setDisable,
+}: VideoSpeedProps) {
   const d = useRef({} as HTMLDivElement);
   const { speed, changeSpeed } = VideoHook(videoRef, contRef, id);
 
@@ -24,6 +30,7 @@ export function VideoSpeed({ videoRef, contRef, id }: VideoSpeedProps) {
         onClick={() => {
           d.current.classList.toggle('video__show-options');
           changeSpeed(val);
+          setDisable(false);
         }}
       >
         {title}

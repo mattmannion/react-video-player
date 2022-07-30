@@ -6,8 +6,6 @@ export function VideoHook(
   contRef: React.MutableRefObject<HTMLDivElement>,
   id: number
 ) {
-  const vp = document.getElementById('video_player-' + id)! as HTMLVideoElement;
-
   const [play, setPlay] = useState<boolean>(true);
   const [muted, setMuted] = useState<boolean>(true);
   const [fs, setFS] = useState<boolean>(false);
@@ -136,13 +134,14 @@ export function VideoHook(
 
   function changeSpeed(val: number) {
     setSpeed(val);
-    vp.playbackRate = val;
+    videoRef.current.playbackRate = val;
   }
 
   return {
     videoRef,
     contRef,
     disable,
+    setDisable,
     muted,
     play,
     prog,
