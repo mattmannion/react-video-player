@@ -1,4 +1,8 @@
 .video {
+  &__progress {
+    margin-inline: 8px;
+  }
+
   &__controls-left,
   &__progress {
     display: flex;
