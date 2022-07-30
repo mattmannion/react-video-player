@@ -1,0 +1,157 @@
+import { useEffect, useRef } from 'react';
+import { useState } from 'react';
+
+export function VideoHook(id: number) {
+  const vp = document.getElementById('video_player-' + id)! as HTMLVideoElement;
+
+  const videoRef = useRef({} as HTMLVideoElement);
+  const contRef = useRef({} as HTMLDivElement);
+
+  const [play, setPlay] = useState<boolean>(true);
+  const [muted, setMuted] = useState<boolean>(true);
+  const [fs, setFS] = useState<boolean>(false);
+
+  const [len, setLen] = useState<string>('00:00');
+  const [clock, setClock] = useState<string>('00:00');
+
+  const [prog, setProg] = useState<number>(0);
+  const [vol, setVol] = useState<number>(80);
+  const [pvol, setPVol] = useState<number>(80);
+  const [speed, setSpeed] = useState<number>(1);
+
+  useEffect(() => {
+    if (muted) setVol(0);
+
+    const v = document.getElementById('video-' + id)!;
+    const c = document.getElementById('controls-' + id)!;
+    const s = document.getElementById('sub-' + id)!;
+    let timeout: NodeJS.Timeout;
+
+    function mouseMove() {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        v.classList.add('video__hide-cursor');
+        c.classList.add('video__hide-controls');
+      }, 2000);
+      v.classList.remove('video__hide-cursor');
+      c.classList.remove('video__hide-controls');
+      c.classList.remove('video__show-controls');
+    }
+
+    v.addEventListener('mousemove', mouseMove);
+
+    function mouseOut() {
+      c.classList.add('video__show-controls');
+    }
+
+    c.addEventListener('mouseout', mouseOut);
+
+    function mouseOver() {
+      c.classList.add('video__over-controls');
+    }
+
+    s.addEventListener('mouseover', mouseOver);
+
+    function mouseLeave() {
+      c.classList.remove('video__over-controls');
+    }
+
+    s.addEventListener('mouseleave', mouseLeave);
+
+    return () => {
+      v.removeEventListener('mouseover', mouseMove);
+      c.removeEventListener('mouseout', mouseOut);
+      s.removeEventListener('mouseover', mouseOver);
+      s.removeEventListener('mouseleave', mouseLeave);
+      clearTimeout(timeout);
+    };
+  }, [id, muted]);
+
+  function toggleMuted() {
+    setMuted((prev) => (prev = !prev));
+    videoRef.current.muted = muted;
+
+    if (!muted) {
+      setPVol(vol);
+      setVol(0);
+    } else setVol(pvol);
+  }
+
+  function volControl(e: React.ChangeEvent<HTMLInputElement>) {
+    videoRef.current.volume = Number(e.target.value) / 100;
+    setVol(videoRef.current.volume * 100);
+    if (vol > 0) setMuted(false);
+  }
+
+  function togglePlay() {
+    setPlay((prev) => (prev = !prev));
+    if (play) videoRef.current.play();
+    else videoRef.current.pause();
+  }
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      contRef.current.requestFullscreen();
+      setFS(true);
+    } else {
+      document.exitFullscreen();
+      setFS(false);
+    }
+  }
+
+  function createTimer(time: number): string {
+    if (!time) time = 0;
+    let m = String(Math.round((time / 60) % 60)).padStart(2, '00');
+    let s = String(Math.round(time % 60)).padStart(2, '00');
+    return m + ':' + s;
+  }
+
+  function timeUpdate() {
+    let time = (videoRef.current.currentTime / videoRef.current.duration) * 100;
+    setProg(time);
+    setClock(createTimer(videoRef.current.currentTime));
+  }
+
+  function progress(e: React.ChangeEvent<HTMLInputElement>) {
+    let time = Number(e.target.value);
+    videoRef.current.currentTime = (videoRef.current.duration / 100) * time;
+    setProg(time);
+  }
+
+  function jump(jump: number) {
+    videoRef.current.currentTime = videoRef.current.currentTime + jump;
+    setProg((prev) => (prev = prev + jump));
+  }
+
+  function loadMetaData() {
+    setLen(createTimer(videoRef.current.duration));
+  }
+
+  function changeSpeed(val: number) {
+    setSpeed(val);
+    vp.playbackRate = val;
+  }
+
+  return {
+    videoRef,
+    contRef,
+    muted,
+    play,
+    prog,
+    clock,
+    vol,
+    len,
+    setLen,
+    togglePlay,
+    toggleMuted,
+    timeUpdate,
+    progress,
+    volControl,
+    toggleFullscreen,
+    loadMetaData,
+    fs,
+    jump,
+    speed,
+    changeSpeed,
+  };
+}

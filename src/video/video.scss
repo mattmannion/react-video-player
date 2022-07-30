@@ -1,0 +1,141 @@
+.video {
+  font-size: 16px;
+  position: relative;
+  overflow: hidden;
+
+  &__hide-cursor {
+    cursor: none;
+  }
+
+  &__player {
+    width: 100%;
+    height: 100vh;
+    aspect-ratio: 16/9;
+
+    background-color: black;
+    display: flex;
+  }
+
+  &__controls-container {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: flex-end;
+    flex-flow: column;
+
+    background: linear-gradient(
+      to top,
+      rgba(black, 0.5),
+      transparent,
+      transparent,
+      transparent
+    );
+
+    opacity: 0;
+
+    transform: translateY(8px);
+
+    transition: opacity 500ms ease-in-out, transform 500ms ease-in-out;
+
+    &:hover {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  &__controls-sub-cont {
+  }
+
+  &__hide-controls:hover {
+    opacity: 0;
+  }
+
+  &__show-controls {
+    opacity: 1;
+    transform: translateY(0);
+    &:hover {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  &__over-controls {
+    opacity: 1;
+    transform: translateY(0);
+    &:hover {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  &__controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding-top: 4px;
+    padding-bottom: 8px;
+  }
+
+  &__controls-left {
+    display: flex;
+    justify-content: space-between;
+
+    & > div {
+      // margin: 0 8px;
+      color: white;
+    }
+  }
+
+  &__play-jump {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__volume {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & > .video__volume-slider {
+      $time: 333ms;
+      opacity: 0;
+      width: 0px;
+      transition: width $time ease-in-out, opacity $time ease-in-out;
+    }
+    &:hover {
+      & > .video__volume-slider {
+        opacity: 1;
+        width: 88px;
+      }
+    }
+  }
+
+  &__volume-slider {
+    margin-left: 12px;
+    transform: translateY(-1px);
+  }
+
+  &__icon {
+    cursor: pointer;
+    transform: translateY(2px);
+  }
+
+  &__clock {
+    user-select: none;
+  }
+
+  &__controls-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__fullscreen {
+    margin-right: 12px;
+  }
+}
