@@ -19,7 +19,13 @@ export function VideoSpeed({ videoRef, contRef, id }: VideoSpeedProps) {
 
   function VideoOption({ title, val }: VideoOptionProps) {
     return (
-      <div className='video__select-option' onClick={() => changeSpeed(val)}>
+      <div
+        className='video__select-option'
+        onClick={() => {
+          d.current.classList.toggle('video__show-options');
+          changeSpeed(val);
+        }}
+      >
         {title}
       </div>
     );
@@ -33,7 +39,7 @@ export function VideoSpeed({ videoRef, contRef, id }: VideoSpeedProps) {
       >
         {speed.toPrecision(3).toString().slice(0, 4)}
       </div>
-      <div className='video__select-options' ref={d}>
+      <div className='video__select-options' id={'options-' + id} ref={d}>
         <VideoOption title='0.25' val={0.25} />
         <VideoOption title='0.50' val={0.5} />
         <VideoOption title='0.75' val={0.75} />

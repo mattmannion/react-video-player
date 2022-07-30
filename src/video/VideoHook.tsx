@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useState } from 'react';
 
 export function VideoHook(
@@ -27,6 +27,7 @@ export function VideoHook(
     const v = document.getElementById('video-' + id)!;
     const c = document.getElementById('controls-' + id)!;
     const s = document.getElementById('sub-' + id)!;
+
     let timeout: NodeJS.Timeout;
 
     function mouseMove() {
@@ -45,7 +46,6 @@ export function VideoHook(
     v.addEventListener('mousemove', mouseMove);
 
     function mouseOut() {
-      console.log('out');
       c.classList.add('video__show-controls');
     }
 
