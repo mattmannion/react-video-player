@@ -27,7 +27,6 @@ export function VideoHook(
     const s = document.getElementById('sub-' + id)!;
 
     let timeout: NodeJS.Timeout;
-
     function mouseMove() {
       clearTimeout(timeout);
 
@@ -63,6 +62,9 @@ export function VideoHook(
 
     s.addEventListener('mouseleave', mouseLeave);
 
+    if (play) c.classList.add('video__over-controls');
+    else c.classList.remove('video__over-controls');
+
     return () => {
       v.removeEventListener('mouseover', mouseMove);
       c.removeEventListener('mouseout', mouseOut);
@@ -70,7 +72,7 @@ export function VideoHook(
       s.removeEventListener('mouseleave', mouseLeave);
       clearTimeout(timeout);
     };
-  }, [id, muted, disable]);
+  }, [id, muted, disable, play]);
 
   function toggleMuted() {
     setMuted((prev) => (prev = !prev));
