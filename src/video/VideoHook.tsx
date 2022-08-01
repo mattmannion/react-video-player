@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function VideoHook(
   videoRef: React.MutableRefObject<HTMLVideoElement>,
