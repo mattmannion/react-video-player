@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  redis:
+    container_name: redis-go
+    image: redis:6.2-alpine
+    command: redis-server
+    restart: on-failure
+    ports:
+      - '6379:6379'
+
+  postgres:
+    container_name: postgres-go
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - ./pgdata:/var/lib/data
+    restart: on-failure
+    ports:
+      - '5432:5432'
