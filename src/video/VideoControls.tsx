@@ -70,7 +70,12 @@ export function VideoControls({
         </div>
         <div className='video__controls'>
           <div className='video__controls-left'>
-            <VideoPlayJump play={play} togglePlay={togglePlay} jump={jump} />
+            <VideoPlayJump
+              play={play}
+              togglePlay={togglePlay}
+              jump={jump}
+              prog={prog}
+            />
             <div className='video__volume'>
               <div className='video__volume-icon' onClick={toggleMuted}>
                 <VideoVolume muted={muted} vol={vol} />

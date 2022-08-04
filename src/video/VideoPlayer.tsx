@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { VideoHook } from 'src/video/VideoHook';
+import { useVideo } from 'src/video/useVideo';
 import { VideoControls } from 'src/video/VideoControls';
 import 'src/video/video.scss';
 
@@ -12,7 +12,7 @@ export function VideoPlayer({ src, id }: VideoProps) {
   const videoRef = useRef({} as HTMLVideoElement);
   const contRef = useRef({} as HTMLDivElement);
 
-  const vh = VideoHook(videoRef, contRef, id);
+  const vh = useVideo(videoRef, contRef, id);
   const { muted, timeUpdate, loadMetaData } = vh;
 
   return (

@@ -60,7 +60,8 @@
 
     border-radius: 5px;
 
-    transition: background-color 333ms;
+    // flashing bug when active, not sure why...
+    // transition: background-color 333ms;
 
     &:hover {
       background-color: rgba(white, 0.25);

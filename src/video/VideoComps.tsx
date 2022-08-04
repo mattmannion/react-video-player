@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import 'src/video/video.select.scss';
-import { VideoHook } from 'src/video/VideoHook';
+import { useVideo } from 'src/video/useVideo';
 
 interface VideoSpeedProps {
   videoRef: React.MutableRefObject<HTMLVideoElement>;
@@ -21,7 +21,7 @@ export function VideoSpeed({
   setDisable,
 }: VideoSpeedProps) {
   const d = useRef({} as HTMLDivElement);
-  const { speed, changeSpeed } = VideoHook(videoRef, contRef, id);
+  const { speed, changeSpeed } = useVideo(videoRef, contRef, id);
 
   function VideoOption({ title, val }: VideoOptionProps) {
     return (
@@ -82,9 +82,15 @@ interface VideoPlayJumpProps {
   play: boolean;
   togglePlay: () => void;
   jump: (jump: number) => void;
+  prog: number;
 }
 
-export function VideoPlayJump({ play, togglePlay, jump }: VideoPlayJumpProps) {
+export function VideoPlayJump({
+  play,
+  togglePlay,
+  jump,
+  prog,
+}: VideoPlayJumpProps) {
   return (
     <div className='video__play-jump'>
       <div onClick={() => jump(-15)}>
@@ -94,7 +100,7 @@ export function VideoPlayJump({ play, togglePlay, jump }: VideoPlayJumpProps) {
         <VideoIcon src='svg/small-backward.svg' alt='backward' />
       </div>
       <div onClick={togglePlay}>
-        {play ? (
+        {play || prog === 100 ? (
           <VideoIcon src='svg/play.svg' alt='play' />
         ) : (
           <VideoIcon src='svg/pause.svg' alt='pause' />

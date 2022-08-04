@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export function VideoHook(
+export function useVideo(
   videoRef: React.MutableRefObject<HTMLVideoElement>,
   contRef: React.MutableRefObject<HTMLDivElement>,
   id: number
@@ -62,12 +62,12 @@ export function VideoHook(
     s.addEventListener('mouseleave', mouseLeave);
 
     if (play) c.classList.add('video__over-controls');
-    else c.classList.remove('video__over-controls');
+    else if (!play) c.classList.remove('video__over-controls');
 
     return () => {
-      v.removeEventListener('mouseover', mouseMove);
+      v.removeEventListener('mousemove', mouseMove);
       c.removeEventListener('mouseout', mouseOut);
-      s.removeEventListener('mouseover', mouseOver);
+      s.removeEventListener('mousemove', mouseOver);
       s.removeEventListener('mouseleave', mouseLeave);
       clearTimeout(timeout);
     };
@@ -90,6 +90,15 @@ export function VideoHook(
   }
 
   function togglePlay() {
+    // restarts video at 100%
+    if (prog === 100) {
+      setProg(0);
+      videoRef.current.currentTime = 0;
+
+      videoRef.current.play();
+
+      return;
+    }
     setPlay((prev) => (prev = !prev));
     if (play) videoRef.current.play();
     else videoRef.current.pause();
