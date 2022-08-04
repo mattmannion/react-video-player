@@ -8,8 +8,7 @@ function Main() {
   return (
     <div>
       <div className='main'>
-        <VideoPlayer src='/videos/lol.mp4' id={1} />
-        <VideoPlayer src='/videos/MemeFeedBot.mp4' id={2} />
+        <VideoPlayer src='http://localhost:7890/api/videos/lol.mp4' id={1} />
       </div>
     </div>
   );
