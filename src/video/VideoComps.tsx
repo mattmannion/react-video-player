@@ -5,6 +5,7 @@ import { useVideo } from 'src/video/useVideo';
 interface VideoSpeedProps {
   videoRef: React.MutableRefObject<HTMLVideoElement>;
   contRef: React.MutableRefObject<HTMLDivElement>;
+  tlRef: React.MutableRefObject<HTMLDivElement>;
   id: number;
   setDisable: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -17,11 +18,12 @@ interface VideoOptionProps {
 export function VideoSpeed({
   videoRef,
   contRef,
+  tlRef,
   id,
   setDisable,
 }: VideoSpeedProps) {
   const d = useRef({} as HTMLDivElement);
-  const { speed, changeSpeed } = useVideo(videoRef, contRef, id);
+  const { speed, changeSpeed } = useVideo(videoRef, contRef, tlRef, id);
 
   function VideoOption({ title, val }: VideoOptionProps) {
     return (
@@ -80,7 +82,7 @@ export function VideoIcon({ src, alt }: VideoIconProps) {
 }
 interface VideoPlayJumpProps {
   play: boolean;
-  togglePlay: () => void;
+  togglePlay: () => Promise<void>;
   jump: (jump: number) => void;
   prog: number;
 }
@@ -99,8 +101,12 @@ export function VideoPlayJump({
       <div onClick={() => jump(-5)}>
         <VideoIcon src='svg/small-backward.svg' alt='backward' />
       </div>
-      <div onClick={togglePlay}>
-        {play || prog === 100 ? (
+      <div
+        onClick={async () => {
+          await togglePlay();
+        }}
+      >
+        {play || prog === 1 ? (
           <VideoIcon src='svg/play.svg' alt='play' />
         ) : (
           <VideoIcon src='svg/pause.svg' alt='pause' />

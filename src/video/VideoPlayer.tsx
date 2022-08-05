@@ -11,8 +11,9 @@ interface VideoProps {
 export function VideoPlayer({ src, id }: VideoProps) {
   const videoRef = useRef({} as HTMLVideoElement);
   const contRef = useRef({} as HTMLDivElement);
+  const tlRef = useRef({} as HTMLDivElement);
 
-  const vh = useVideo(videoRef, contRef, id);
+  const vh = useVideo(videoRef, contRef, tlRef, id);
   const { muted, timeUpdate, loadMetaData } = vh;
 
   return (

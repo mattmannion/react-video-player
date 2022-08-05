@@ -1,10 +1,58 @@
 .video {
-  &__progress {
-    margin-inline: 8px;
+  $timeline-color: white;
+
+  &__timeline-container {
+    height: 8px;
+    margin-inline: 10px;
+    margin-bottom: 2px;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:hover .video__timeline {
+      height: 100%;
+    }
+
+    &:hover .video__timeline::before {
+      display: block;
+    }
   }
 
-  &__controls-left,
-  &__progress {
+  &__timeline {
+    background-color: rgba(100, 100, 100, 0.5);
+    height: 4px;
+    width: 100%;
+    position: relative;
+
+    transition: height 333ms;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+
+      left: 0;
+      top: 0;
+      bottom: 0;
+    }
+
+    // grey section
+    &::before {
+      right: calc(100% - var(--preview-position) * 100%);
+      background-color: rgb(150, 150, 150);
+      display: none;
+    }
+
+    // red section
+    &::after {
+      right: calc(100% - var(--progress-position) * 100%);
+      background-color: $timeline-color;
+    }
+  }
+
+  &__controls-left {
     display: flex;
     justify-content: center;
     align-items: center;

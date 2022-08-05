@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 export function useVideo(
   videoRef: React.MutableRefObject<HTMLVideoElement>,
   contRef: React.MutableRefObject<HTMLDivElement>,
+  tlRef: React.MutableRefObject<HTMLDivElement>,
   id: number
 ) {
   const [play, setPlay] = useState<boolean>(true);
@@ -13,11 +14,12 @@ export function useVideo(
   const [len, setLen] = useState<string>('00:00');
   const [clock, setClock] = useState<string>('00:00');
 
-  const [prog, setProg] = useState<number>(0);
+  const [tl, setTL] = useState<number>(0);
   const [vol, setVol] = useState<number>(80);
   const [pvol, setPVol] = useState<number>(80);
   const [speed, setSpeed] = useState<number>(1);
 
+  // event listeners
   useEffect(() => {
     if (muted) setVol(0);
 
@@ -71,7 +73,7 @@ export function useVideo(
       s.removeEventListener('mouseleave', mouseLeave);
       clearTimeout(timeout);
     };
-  }, [id, muted, disable, play]);
+  }, [id, muted, disable, play, tl]);
 
   function toggleMuted() {
     setMuted((prev) => (prev = !prev));
@@ -89,18 +91,18 @@ export function useVideo(
     if (vol > 0) setMuted(false);
   }
 
-  function togglePlay() {
+  async function togglePlay() {
     // restarts video at 100%
-    if (prog === 100) {
-      setProg(0);
+    if (tl === 1) {
+      setTL(0);
       videoRef.current.currentTime = 0;
 
-      videoRef.current.play();
+      await videoRef.current.play();
 
       return;
     }
     setPlay((prev) => (prev = !prev));
-    if (play) videoRef.current.play();
+    if (play) await videoRef.current.play();
     else videoRef.current.pause();
   }
 
@@ -122,20 +124,51 @@ export function useVideo(
   }
 
   function timeUpdate() {
-    let time = (videoRef.current.currentTime / videoRef.current.duration) * 100;
-    setProg(time);
+    setTL(videoRef.current.currentTime / videoRef.current.duration);
     setClock(createTimer(videoRef.current.currentTime));
+
+    tlRef.current.style.setProperty(
+      '--progress-position',
+      (videoRef.current.currentTime / videoRef.current.duration).toString()
+    );
   }
 
-  function progress(e: React.ChangeEvent<HTMLInputElement>) {
-    let time = Number(e.target.value);
-    videoRef.current.currentTime = (videoRef.current.duration / 100) * time;
-    setProg(time);
+  function timelineUpdate(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    const r = tlRef.current.getBoundingClientRect();
+    const p = Math.min(Math.max(0, e.clientX - r.x), r.width) / r.width;
+
+    tlRef.current.style.setProperty('--preview-position', p.toString());
+
+    if ((e.buttons & 1) === 1) {
+      e.preventDefault();
+      tlRef.current.style.setProperty('--progress-position', p.toString());
+      videoRef.current.currentTime = p * videoRef.current.duration;
+      setPlay(true);
+      setDisable(true);
+    }
+  }
+
+  async function toggleScrubbing(
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) {
+    const r = tlRef.current.getBoundingClientRect();
+    const p = Math.min(Math.max(0, e.clientX - r.x), r.width) / r.width;
+
+    tlRef.current.style.setProperty('--progress-position', p.toString());
+
+    if ((e.buttons & 1) === 1) {
+      videoRef.current.currentTime = p * videoRef.current.duration;
+      videoRef.current.pause();
+      setPlay(true);
+      setDisable(true);
+    } else {
+      setDisable(true);
+    }
   }
 
   function jump(jump: number) {
     videoRef.current.currentTime = videoRef.current.currentTime + jump;
-    setProg((prev) => (prev = prev + jump));
+    setTL((prev) => (prev = prev + jump));
   }
 
   function loadMetaData() {
@@ -150,11 +183,12 @@ export function useVideo(
   return {
     videoRef,
     contRef,
+    tlRef,
     disable,
     setDisable,
     muted,
     play,
-    prog,
+    tl,
     clock,
     vol,
     len,
@@ -162,7 +196,8 @@ export function useVideo(
     togglePlay,
     toggleMuted,
     timeUpdate,
-    progress,
+    timelineUpdate,
+    toggleScrubbing,
     volControl,
     toggleFullscreen,
     loadMetaData,
